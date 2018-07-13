@@ -64,13 +64,13 @@ local csv1  "$csv1"
 
 * Update list of all methods offered/counseled on ("methods"), all methods provided/prescribed ("methods_short") and all physical methods ("methods_stock")
 local methods "fster mster impl iud inj3m inj1m pill ec ntab mc fc dia foam beads lam rhyth withd"
-local methods_short "fster mster impl iud inj3m inj1m pill ec ntab mc fc dia foam beads"
+local methods_short "fster mster impl iud inj3m inj1m pill ec ntab mc fc dia foam beads other"
 
 
 * Update list of all methods counseled on ("methods_full") and provided/referred ("methods_short_full")	
 * but use full method name, not abbreviation from ODK
 local methods_full "female_ster male_ster implants iud injectables_3mo injectables_1mo pills ec ntablet male_condoms female_condoms diaphragm foam beads lam rhythm withdrawal"
-local methods_short_full "female_ster male_ster implants iud injectables_3mo injectables_1mo pills ec ntablet male_condoms female_condoms diaphragm foam beads"
+local methods_short_full "female_ster male_ster implants iud injectables_3mo injectables_1mo pills ec ntablet male_condoms female_condoms diaphragm foam beads other"
 
 
 * Update list of physical methods, but use full method name, not abbreviation
@@ -84,9 +84,9 @@ local lastmethodprovided "beads"
 
 * Set directory forcountry and round 
 
-global datadir "C:\Users\shujiang\Dropbox (Gates Institute)\Monitor GHR6\20Dec2017"
-global dofiledir "C:\Users\shujiang\Dropbox (Gates Institute)\PMADataManagement_Ghana\Round6\Cleaning_DoFiles\Current"
-global csvfilesdir "C:\Users\shujiang\Dropbox (Gates Institute)\PMADataManagement_Ghana\Round6\Data\CSV_Files"
+global datadir "C:\Users\Shulin\Desktop\github_test\data"
+global dofiledir "C:\Users\Shulin\Desktop\github_test"
+global csvfilesdir "C:\Users\Shulin\Dropbox (Gates Institute)\PMADataManagement_Ghana\Round6\Data\CSV_Files"
 
 
 cd "$datadir"
@@ -651,6 +651,7 @@ rename fpc_grp`method'_charged charged_`method'
 capture encode charged_`method', gen(charged_`method'v2) lab(yes_no_dnk_nr_list)
 }
 }
+gen charged_diaphragmv2=charged_dia
 capture order charged_fster-charged_`lastmethodprovided', after(provided_`lastmethodprovided')
 
 * Referral for FP Methods 
@@ -677,6 +678,10 @@ label define stock_list 1 "In-stock and observed" ///
 foreach method in `methods_stock_full' {
 capture encode stockout_3mo_`method', gen(stockout_3mo_`method'v2) lab(yes_no_dnk_nr_list)
 }
+
+//REVISION: SJ 12JUL2018 fixed the missing stock and stockout problem due to all missing value
+gen stock_diaphragmv2=stock_diaphragm
+gen stockout_3mo_diaphragmv2=stockout_3mo_diaphragm
 
 * Rename counseled_*, provided_*, referred_*, and charged_* variables to be consistent with earlier rounds
 foreach var in counseled provided referred charged {
@@ -1031,6 +1036,10 @@ label val `var' yes_no_dnk_nr_list
 *******************************************************************************
 drop if metainstanceID=="uuid:9e3ff9ad-d81e-4414-a71b-866845705a89"
 
+//REVISION: SJ drop partially completed forms for the same facility
+drop if metainstanceID=="uuid:f86afe7d-ebc5-499c-b55a-02daee24d956"
+drop if metainstanceID=="uuid:2312f7d7-e80b-4776-af00-9296b78e8a5a"
+
 /*
 * Change facility location
 replace facility_location=# if metainstanceID==""
@@ -1139,9 +1148,10 @@ export excel round metainstanceID region level2 EA RE facility_name facility_typ
 
 * Drop for public release
 * UPDATE BY COUNTRY
+/*
 drop EA RE level2 facility_number facility_name	///
 locationlatitude locationlongitude locationaltitude locationaccuracy 
-
+*/
 saveold "`CCRX'_SDP_100Prelim_noname_$date.dta", version(12) replace
 
 *******************************************************************************
