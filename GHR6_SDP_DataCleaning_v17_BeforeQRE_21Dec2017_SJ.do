@@ -1040,6 +1040,10 @@ drop if metainstanceID=="uuid:9e3ff9ad-d81e-4414-a71b-866845705a89"
 drop if metainstanceID=="uuid:f86afe7d-ebc5-499c-b55a-02daee24d956"
 drop if metainstanceID=="uuid:2312f7d7-e80b-4776-af00-9296b78e8a5a"
 
+//REVISION: SJ drop duplicate completed forms of SDP
+drop if metainstanceID=="uuid:6dff03cb-b709-40f7-86df-5c93b662f0c4" // facility_name Nyame Adom
+drop if metainstanceID=="uuid:a6f3422c-5a0e-476e-8451-a46020ed3f34" // facility name Noyem_CHPS
+
 /*
 * Change facility location
 replace facility_location=# if metainstanceID==""
